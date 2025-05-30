@@ -42,7 +42,7 @@ def query(payload, retries=5):
     return None
 
 # Streamlit page configuration
-st.set_page_config(page_title="Text to Image Generator", layout="wide")
+st.set_page_config(page_title="Text to Image Generator", layout="centered")
 
 # Create three columns: spacer | app content | spacer
 spacer_left, content_col, spacer_right = st.columns([1, 4, 1])  # Adjust ratios to control margins
