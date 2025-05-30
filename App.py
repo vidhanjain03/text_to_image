@@ -1,0 +1,67 @@
+import requests
+import io
+import time
+from PIL import Image
+import streamlit as st
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Hugging Face API setup
+API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"}
+
+# Function to call Hugging Face inference API
+def query(payload, retries=5):
+    for attempt in range(retries):
+        print(f"Attempt {attempt+1} of {retries}")
+        response = requests.post(API_URL, headers=headers, json=payload)
+        content_type = response.headers.get("content-type", "")
+
+        if "image" in content_type:
+            print("✅ Image successfully generated!")
+            return response.content
+        else:
+            try:
+                error_info = response.json()
+                print("⚠️ API response:", error_info)
+                if "estimated_time" in error_info:
+                    wait_time = int(error_info["estimated_time"]) + 5
+                    print(f"⏳ Model is loading. Waiting for {wait_time} seconds...")
+                    time.sleep(wait_time)
+                else:
+                    print("❌ Non-retryable error. Exiting.")
+                    return None
+            except Exception as e:
+                print("❌ Error parsing JSON response:", e)
+                return None
+    print("❌ All retries exhausted. No image generated.")
+    return None
+
+# Streamlit page configuration
+st.set_page_config(page_title="Text to Image Generator", layout="wide")
+st.title("🎨 Text to Image Generator with Stable Diffusion XL")
+
+# Split screen into two columns
+left_col, right_col = st.columns([1, 2])  # 1/3 prompt, 2/3 image
+
+# Left Column: Prompt Input
+with left_col:
+    st.header("📝 Prompt")
+    prompt = st.text_area("Describe what you want to generate:", height=150)
+    generate_button = st.button("✨ Generate Image")
+
+# Right Column: Output Image
+with right_col:
+    if generate_button:
+        if not prompt.strip():
+            st.warning("Please enter a prompt to generate an image.")
+        else:
+            with st.spinner("🖼️ Generating image..."):
+                image_bytes = query({"inputs": prompt})
+                if image_bytes:
+                    image = Image.open(io.BytesIO(image_bytes))
+                    st.image(image, caption="Generated Image", width=300) #use_container_width=True
+                else:
+                    st.error("Failed to generate image. Please try again.")
