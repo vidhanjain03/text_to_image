@@ -11,7 +11,7 @@ load_dotenv()
 # Hugging Face API setup
 hf_token = st.secrets["HUGGINGFACE_TOKEN"]
 API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
-#headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"} now.env file is not needed
+#headers = {"Authorization": f"Bearer {os.getenv('HF_TOKEN')}"} #now .env file is not needed
 headers = {"Authorization": f"Bearer {hf_token}"}
 
 # Function to call Hugging Face inference API
