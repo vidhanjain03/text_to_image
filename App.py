@@ -64,6 +64,6 @@ with right_col:
                 image_bytes = query({"inputs": prompt})
                 if image_bytes:
                     image = Image.open(io.BytesIO(image_bytes))
-                    st.image(image, caption="Generated Image", width=300) #use_container_width=True
+                    st.image(image, caption="Generated Image", width=512) #use_container_width=True
                 else:
                     st.error("Failed to generate image. Please try again.")
