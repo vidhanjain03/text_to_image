@@ -42,7 +42,7 @@ def query(payload, retries=5):
     return None
 
 # Streamlit page configuration
-st.set_page_config(page_title="Text to Image Generator", layout="centered")
+st.set_page_config(page_title="Text to Image Generator", layout="wide")
 st.title("🎨 Text to Image Generator with Stable Diffusion XL")
 
 # Split screen into two columns
