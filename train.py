@@ -1,3 +1,5 @@
+## This code is compiled models_utils.py and MyApp.py
+
 from diffusers import DiffusionPipeline
 import torch
 import streamlit as st
