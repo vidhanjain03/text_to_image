@@ -43,27 +43,31 @@ def query(payload, retries=5):
 
 # Streamlit page configuration
 st.set_page_config(page_title="Text to Image Generator", layout="wide")
-st.title("🎨 Text to Image Generator with Stable Diffusion XL")
 
-# Split screen into two columns
-left_col, right_col = st.columns([1, 2])  # 1/3 prompt, 2/3 image
+# Create three columns: spacer | app content | spacer
+spacer_left, content_col, spacer_right = st.columns([1, 4, 1])  # Adjust ratios to control margins
 
-# Left Column: Prompt Input
-with left_col:
-    st.header("📝 Prompt")
-    prompt = st.text_area("Describe what you want to generate:", height=150)
-    generate_button = st.button("✨ Generate Image")
+with content_col:
+    st.title("🎨 Text to Image Generator with Stable Diffusion XL")
 
-# Right Column: Output Image
-with right_col:
-    if generate_button:
-        if not prompt.strip():
-            st.warning("Please enter a prompt to generate an image.")
-        else:
-            with st.spinner("🖼️ Generating image..."):
-                image_bytes = query({"inputs": prompt})
-                if image_bytes:
-                    image = Image.open(io.BytesIO(image_bytes))
-                    st.image(image, caption="Generated Image", width=512) #use_container_width=True
-                else:
-                    st.error("Failed to generate image. Please try again.")
+    # Split the main content column into two: left for prompt, right for image
+    left_col, right_col = st.columns([1, 2])  # Adjust width ratios here too
+
+    with left_col:
+        st.header("📝 Prompt")
+        prompt = st.text_area("Describe what you want to generate:", height=150)
+        generate_button = st.button("✨ Generate Image")
+
+    with right_col:
+        if generate_button:
+            if not prompt.strip():
+                st.warning("Please enter a prompt to generate an image.")
+            else:
+                with st.spinner("🖼️ Generating image..."):
+                    image_bytes = query({"inputs": prompt})
+                    if image_bytes:
+                        image = Image.open(io.BytesIO(image_bytes))
+                        st.image(image, caption="Generated Image", width=512)
+                    else:
+                        st.error("Failed to generate image. Please try again.")
+
